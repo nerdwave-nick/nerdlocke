@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/dgraph-io/badger"
 	"github.com/maypok86/otter"
 	"github.com/nerdwave-nick/nerdlocke/internal/pokeapi"
-	"go.etcd.io/bbolt"
 )
 
 type MultiLayerCache struct {
@@ -51,48 +51,27 @@ func (c *MultiLayerCache) Get(endpoint string, value any) (bool, error) {
 	return indexFound >= 0, nil
 }
 
-type BoltCache struct {
-	db  *bbolt.DB
+type BadgerCache struct {
+	db  *badger.DB
 	TTL time.Duration
-}
-
-type boltCacheTtlItem struct {
-	ValidUntil time.Time       `json:"valid_until"`
-	Value      json.RawMessage `json:"value"`
 }
 
 var bucket = []byte("papi_cache")
 
-func NewBoltCache(db *bbolt.DB, ttl time.Duration) (*BoltCache, error) {
-	err := db.Update(func(tx *bbolt.Tx) error {
-		_, err := tx.CreateBucketIfNotExists(bucket)
-		if err != nil {
-			return err
-		}
-		return nil
-	})
-	if err != nil {
-		err = fmt.Errorf("errors creating cache bucket: %w -  %w", err, db.Close())
-		return nil, err
-	}
-	return &BoltCache{db: db, TTL: ttl}, nil
+func NewBadgerCache(db *badger.DB, ttl time.Duration) BadgerCache {
+	return BadgerCache{db: db, TTL: ttl}
 }
 
-func (c *BoltCache) putItem(key string, value json.RawMessage) error {
-	boltCacheItem := boltCacheTtlItem{ValidUntil: time.Now().Add(c.TTL), Value: value}
-	bytes, err := json.Marshal(boltCacheItem)
-	if err != nil {
-		return err
-	}
-	return c.db.Update(func(tx *bbolt.Tx) error {
-		b := tx.Bucket(bucket)
-		err = b.Put([]byte(key), bytes)
+func (c *BadgerCache) putItem(key string, value []byte) error {
+	return c.db.Update(func(txn *badger.Txn) error {
+		e := badger.NewEntry([]byte(key), value).WithTTL(c.TTL)
+		err := txn.SetEntry(e)
 		return err
 	})
 }
 
-func (c *BoltCache) Set(endpoint string, value any) error {
-	fmt.Printf("writing to bolt cache: %q\n", endpoint)
+func (c *BadgerCache) Set(endpoint string, value any) error {
+	fmt.Printf("writing to badger cache: %q\n", endpoint)
 	bytes, err := json.Marshal(value)
 	if err != nil {
 		return err
@@ -102,44 +81,32 @@ func (c *BoltCache) Set(endpoint string, value any) error {
 
 var boltBucketNotFoundError = errors.New("bucket not found")
 
-func (c *BoltCache) getItem(key string, value any) (bool, error) {
+func (c *BadgerCache) getItem(key string, value any) (bool, error) {
 	var bytes []byte = nil
-	err := c.db.View(func(tx *bbolt.Tx) error {
-		b := tx.Bucket(bucket)
-		if b == nil {
-			return boltBucketNotFoundError
+	err := c.db.View(func(txn *badger.Txn) error {
+		item, err := txn.Get([]byte(key))
+		if err != nil {
+			return err
 		}
-		serializedItem := b.Get([]byte(key))
-		if serializedItem == nil {
-			fmt.Printf("a not found")
-			return nil
+		bytes, err = item.ValueCopy(bytes)
+		if err != nil {
+			return err
 		}
-		// avoid blocking the db
-		bytes = make([]byte, len(serializedItem))
-		copy(bytes, serializedItem)
-		fmt.Printf("copied")
 		return nil
 	})
+	if errors.Is(err, badger.ErrKeyNotFound) {
+		return false, nil
+	}
 	if err != nil {
 		return false, err
 	}
 	if bytes == nil {
-		fmt.Printf("bytes are nil")
 		return false, nil
 	}
-	boltCacheItem := boltCacheTtlItem{}
-	err = json.Unmarshal(bytes, &boltCacheItem)
-	if err != nil {
-		return false, err
-	}
-	// past ttl
-	if boltCacheItem.ValidUntil.Before(time.Now()) {
-		return false, nil
-	}
-	return true, json.Unmarshal(boltCacheItem.Value, value)
+	return true, json.Unmarshal(bytes, value)
 }
 
-func (c *BoltCache) Get(endpoint string, value any) (bool, error) {
+func (c *BadgerCache) Get(endpoint string, value any) (bool, error) {
 	found, err := c.getItem(endpoint, value)
 	if err != nil {
 		fmt.Printf("error checking in bolt cache: %q, %v\n", endpoint, err)
