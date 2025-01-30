@@ -8,6 +8,7 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/danielgtaylor/huma/v2/humacli"
@@ -32,18 +33,19 @@ func badgerBackgroundHandling(ctx context.Context, db *badger.DB, gcInterval tim
 					}
 				}
 			case <-ctx.Done():
-				err := db.Close()
-				if err != nil {
-					slog.Error("shutting down the badger db", slog.Any("error", err))
-				}
+				slog.Debug("badger gc loop shut down")
 				return
 			}
 		}
 	}()
 }
 
-func startServer(ctx context.Context, server *http.Server) func() {
+func startServer(ctx context.Context, opts *Options, server *http.Server, db *badger.DB) func() {
 	return func() {
+		// start background gc and closing handler
+		badgerBackgroundHandling(ctx, db, time.Duration(opts.GCInterval)*time.Second)
+		slog.Info("badger db background gc started...")
+
 		slog.Info("server ready to listen...", slog.String("address", server.Addr))
 		if err := server.ListenAndServe(); err != nil {
 			if errors.Is(err, http.ErrServerClosed) {
@@ -55,12 +57,20 @@ func startServer(ctx context.Context, server *http.Server) func() {
 	}
 }
 
-func stopServerWithTimeout(cancelRunningProcesses context.CancelFunc, server *http.Server) func() {
+func stopServerWithTimeout(cancelRunningProcesses context.CancelFunc, server *http.Server, db *badger.DB) func() {
 	return func() {
-		cancelRunningProcesses()
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
-		server.Shutdown(ctx)
+		err := server.Shutdown(ctx)
+		if err != nil {
+			slog.Error("shutting down http server", slog.Any("error", err))
+		}
+
+		cancelRunningProcesses()
+		err = db.Close()
+		if err != nil {
+			slog.Error("shutting down db", slog.Any("error", err))
+		}
 	}
 }
 
@@ -102,6 +112,24 @@ func (o *Options) Validate() error {
 	return err
 }
 
+type BadgerLoggerWrapper struct{}
+
+func (*BadgerLoggerWrapper) Errorf(format string, args ...interface{}) {
+	slog.Error(strings.TrimSuffix(fmt.Sprintf(format, args...), "\n"), slog.String("module", "badger"))
+}
+
+func (*BadgerLoggerWrapper) Warningf(format string, args ...interface{}) {
+	slog.Warn(strings.TrimSuffix(fmt.Sprintf(format, args...), "\n"), slog.String("module", "badger"))
+}
+
+func (*BadgerLoggerWrapper) Infof(format string, args ...interface{}) {
+	slog.Info(strings.TrimSuffix(fmt.Sprintf(format, args...), "\n"), slog.String("module", "badger"))
+}
+
+func (*BadgerLoggerWrapper) Debugf(format string, args ...interface{}) {
+	slog.Debug(strings.TrimSuffix(fmt.Sprintf(format, args...), "\n"), slog.String("module", "badger"))
+}
+
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -111,12 +139,10 @@ func main() {
 			os.Exit(1)
 		}
 		// persistent badger db and cache wrapper
-		db, err := badger.Open(badger.DefaultOptions(opts.DBPath))
+		db, err := badger.Open(badger.DefaultOptions(opts.DBPath).WithLogger(&BadgerLoggerWrapper{}))
 		if err != nil {
 			panic(err)
 		}
-		// start background gc and closing handler
-		badgerBackgroundHandling(ctx, db, time.Duration(opts.GCInterval)*time.Second)
 
 		boltCache := NewBadgerCache(db, time.Duration(opts.L2CacheTTL)*time.Second)
 
@@ -210,8 +236,8 @@ func main() {
 		// 	_, _ = w.Write(bytes)
 		// })
 
-		hooks.OnStart(startServer(ctx, server))
-		hooks.OnStop(stopServerWithTimeout(cancel, server))
+		hooks.OnStart(startServer(ctx, opts, server, db))
+		hooks.OnStop(stopServerWithTimeout(cancel, server, db))
 	})
 
 	// Run the thing!

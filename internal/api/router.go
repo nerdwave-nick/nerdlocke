@@ -29,7 +29,7 @@ func MakeRouter(router *http.ServeMux, controllers []Controller) http.Handler {
 	})
 
 	humaConfig := huma.DefaultConfig("Event Bus", "v1")
-	humaConfig.DocsPath = "/openapi"
+	humaConfig.DocsPath = "/api/openapi"
 
 	api := humago.New(router, humaConfig)
 	rctx := common.RouteCreationContext{
