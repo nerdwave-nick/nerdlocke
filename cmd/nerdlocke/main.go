@@ -21,31 +21,38 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	boltCache, err := NewBoltCache(db)
+	boltCache, err := NewBoltCache(db, 1*time.Minute)
 	if err != nil {
 		panic(err)
 	}
 
 	// in memory otter cache
-	builder, err := otter.NewBuilder[string, []byte](10000)
+	oc, err := otter.MustBuilder[string, []byte](10_000).
+		WithTTL(30 * time.Second).
+		DeletionListener(func(key string, _ []byte, cause otter.DeletionCause) {
+			fmt.Printf("deleting %q from otter cache due to %v\n", key, cause)
+		}).
+		Build()
 	if err != nil {
 		panic(err)
 	}
-	builder.WithTTL(3 * time.Minute).DeletionListener(func(key string, _ []byte, cause otter.DeletionCause) {
-		fmt.Printf("deleting %q from otter cache due to %v\n", key, cause)
-	})
-	// builder.Cost(func(key string, value []byte) uint32 {
-	// 	return uint32(len(value))
-	// })
-	// oc, err := builder.Build()
-	// if err != nil {
-	// panic(err)
-	// }
-	// otterCache := NewOtterCache(&oc)
+	otterCache := NewOtterCache(&oc)
+
+	oc2, err := otter.MustBuilder[string, []byte](100).
+		WithTTL(10 * time.Second).
+		DeletionListener(func(key string, _ []byte, cause otter.DeletionCause) {
+			fmt.Printf("deleting %q from otter cache due to %v\n", key, cause)
+		}).
+		Build()
+	if err != nil {
+		panic(err)
+	}
+	otterCache2 := NewOtterCache(&oc2)
 
 	// multi layer cache with preference for the in memory cache
 	multiCache := NewMultiLayerCache(
-		// otterCache,
+		otterCache2,
+		otterCache,
 		boltCache,
 	)
 
