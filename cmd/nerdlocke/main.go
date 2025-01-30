@@ -82,6 +82,8 @@ func main() {
 			} else {
 				b, err = pokeapiClient.Pokemons(10, 0)
 			}
+		case "tryfucky":
+			b, err = pokeapiClient.Pokemon("https://pokeapi.co/api/v2/pokemon/121")
 		}
 		w.WriteHeader(http.StatusOK)
 		if err != nil {

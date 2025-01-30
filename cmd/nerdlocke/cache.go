@@ -18,7 +18,7 @@ func NewMultiLayerCache(caches ...pokeapi.Cache) *MultiLayerCache {
 }
 
 func (c *MultiLayerCache) Set(endpoint string, value any) error {
-	fmt.Printf("writing to multi layer cache: %q: %+v\n", endpoint, value)
+	fmt.Printf("writing to multi layer cache: %q\n", endpoint)
 	for _, cache := range c.caches {
 		err := cache.Set(endpoint, value)
 		if err != nil {
@@ -64,7 +64,7 @@ func NewBoltCache(db *bbolt.DB) (*BoltCache, error) {
 }
 
 func (c *BoltCache) Set(endpoint string, value any) error {
-	fmt.Printf("writing to bolt cache: %q: %+v\n", endpoint, value)
+	fmt.Printf("writing to bolt cache: %q\n", endpoint)
 	bytes, err := json.Marshal(value)
 	if err != nil {
 		return err
@@ -106,7 +106,7 @@ func (c *BoltCache) Get(endpoint string, value any) (bool, error) {
 		fmt.Printf("not found in bolt cache: %q\n", endpoint)
 		return false, nil
 	}
-	fmt.Printf("found in bolt cache: %q:%+v\n", endpoint, value)
+	fmt.Printf("found in bolt cache: %q\n", endpoint)
 	return true, nil
 }
 
@@ -119,7 +119,7 @@ func NewOtterCache(c *otter.Cache[string, []byte]) *OtterCache {
 }
 
 func (c *OtterCache) Set(endpoint string, value any) error {
-	fmt.Printf("writing to otter cache: %q: %+v\n", endpoint, value)
+	fmt.Printf("writing to otter cache: %q\n", endpoint)
 	bytes, err := json.Marshal(value)
 	if err != nil {
 		return err
@@ -139,6 +139,6 @@ func (c *OtterCache) Get(endpoint string, value any) (bool, error) {
 		fmt.Printf("error unmarshalling from otter cache: %q\n", endpoint)
 		return true, err
 	}
-	fmt.Printf("found in otter cache: %q:%+v\n", endpoint, value)
+	fmt.Printf("found in otter cache: %q\n", endpoint)
 	return true, nil
 }

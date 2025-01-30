@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"strings"
 )
 
 const (
@@ -57,6 +58,10 @@ func doUncached[T any](c *Client, endpoint string) (*T, error) {
 }
 
 func do[T any](c *Client, endpoint string) (*T, error) {
+	_, after, found := strings.Cut(endpoint, base_url)
+	if found {
+		endpoint = after
+	}
 	value := new(T)
 	found, err := c.cache.Get(endpoint, value)
 	if err != nil {
