@@ -1,5 +1,131 @@
 package pokeapi
 
+import "fmt"
+
+func (c *Client) Abilities(limit int, offset int) (*NamedAPIResourceList, error) {
+	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("abilitie?limit=%d&offset=%d", limit, offset))
+}
+
+func (c *Client) Ability(idOrName string) (*Ability, error) {
+	return do[Ability](c, fmt.Sprintf("ability/%s", idOrName))
+}
+
+func (c *Client) Characteristics(limit int, offset int) (*APIResourceList, error) {
+	return doUncached[APIResourceList](c, fmt.Sprintf("characteristic?limit=%d&offset=%d", limit, offset))
+}
+
+func (c *Client) Characteristic(id string) (*Characteristic, error) {
+	return do[Characteristic](c, fmt.Sprintf("characteristic/%s", id))
+}
+
+func (c *Client) EggGroups(limit int, offset int) (*NamedAPIResourceList, error) {
+	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("egg-group?limit=%d&offset=%d", limit, offset))
+}
+
+func (c *Client) EggGroup(idOrName string) (*EggGroup, error) {
+	return do[EggGroup](c, fmt.Sprintf("egg-group/%s", idOrName))
+}
+
+func (c *Client) Genders(limit int, offset int) (*NamedAPIResourceList, error) {
+	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("gender?limit=%d&offset=%d", limit, offset))
+}
+
+func (c *Client) Gender(idOrName string) (*Gender, error) {
+	return do[Gender](c, fmt.Sprintf("gender/%s", idOrName))
+}
+
+func (c *Client) GrowthRates(limit int, offset int) (*NamedAPIResourceList, error) {
+	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("growth-rate?limit=%d&offset=%d", limit, offset))
+}
+
+func (c *Client) GrowthRate(idOrName string) (*GrowthRate, error) {
+	return do[GrowthRate](c, fmt.Sprintf("growth-rate/%s", idOrName))
+}
+
+func (c *Client) Natures(limit int, offset int) (*NamedAPIResourceList, error) {
+	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("nature?limit=%d&offset=%d", limit, offset))
+}
+
+func (c *Client) Nature(idOrName string) (*Nature, error) {
+	return do[Nature](c, fmt.Sprintf("nature/%s", idOrName))
+}
+
+func (c *Client) PokeathlonStats(limit int, offset int) (*NamedAPIResourceList, error) {
+	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("pokeathlon-stat?limit=%d&offset=%d", limit, offset))
+}
+
+func (c *Client) PokeathlonStat(idOrName string) (*PokeathlonStat, error) {
+	return do[PokeathlonStat](c, fmt.Sprintf("pokeathlon-stat/%s", idOrName))
+}
+
+func (c *Client) Pokemons(limit int, offset int) (*NamedAPIResourceList, error) {
+	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("pokemon?limit=%d&offset=%d", limit, offset))
+}
+
+func (c *Client) Pokemon(idOrName string) (*Pokemon, error) {
+	return do[Pokemon](c, fmt.Sprintf("pokemon/%s", idOrName))
+}
+
+func (c *Client) PokemonLocationAreas(pokemonIdOrName string) (*[]LocationAreaEncounter, error) {
+	return do[[]LocationAreaEncounter](c, fmt.Sprintf("pokemon/%s/encounters", pokemonIdOrName))
+}
+
+func (c *Client) PokemonColors(limit int, offset int) (*NamedAPIResourceList, error) {
+	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("pokemon-color?limit=%d&offset=%d", limit, offset))
+}
+
+func (c *Client) PokemonColor(idOrName string) (*PokemonColor, error) {
+	return do[PokemonColor](c, fmt.Sprintf("pokemon-color/%s", idOrName))
+}
+
+func (c *Client) PokemonForms(limit int, offset int) (*NamedAPIResourceList, error) {
+	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("pokemon-form?limit=%d&offset=%d", limit, offset))
+}
+
+func (c *Client) PokemonForm(idOrName string) (*PokemonForm, error) {
+	return do[PokemonForm](c, fmt.Sprintf("pokemon-form/%s", idOrName))
+}
+
+func (c *Client) PokemonHabitats(limit int, offset int) (*NamedAPIResourceList, error) {
+	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("pokemon-habitat?limit=%d&offset=%d", limit, offset))
+}
+
+func (c *Client) PokemonHabitat(idOrName string) (*PokemonHabitat, error) {
+	return do[PokemonHabitat](c, fmt.Sprintf("pokemon-habitat/%s", idOrName))
+}
+
+func (c *Client) PokemonShapes(limit int, offset int) (*NamedAPIResourceList, error) {
+	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("pokemon-shape?limit=%d&offset=%d", limit, offset))
+}
+
+func (c *Client) PokemonShape(idOrName string) (*PokemonShape, error) {
+	return do[PokemonShape](c, fmt.Sprintf("pokemon-shape/%s", idOrName))
+}
+
+func (c *Client) PokemonSpecieses(limit int, offset int) (*NamedAPIResourceList, error) {
+	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("pokemon-species?limit=%d&offset=%d", limit, offset))
+}
+
+func (c *Client) PokemonSpecies(idOrName string) (*PokemonSpecies, error) {
+	return do[PokemonSpecies](c, fmt.Sprintf("pokemon-species/%s", idOrName))
+}
+
+func (c *Client) Stats(limit int, offset int) (*NamedAPIResourceList, error) {
+	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("stat=%d&offset=%d", limit, offset))
+}
+
+func (c *Client) Stat(idOrName string) (*Stat, error) {
+	return do[Stat](c, fmt.Sprintf("stat/%s", idOrName))
+}
+
+func (c *Client) Types(limit int, offset int) (*NamedAPIResourceList, error) {
+	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("type?limit=%d&offset=%d", limit, offset))
+}
+
+func (c *Client) Type(idOrName string) (*Type, error) {
+	return do[Type](c, fmt.Sprintf("type/%s", idOrName))
+}
+
 type Ability struct {
 	// The identifier for this resource.
 	ID int `json:"id"`

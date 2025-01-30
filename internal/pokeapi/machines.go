@@ -1,5 +1,15 @@
 package pokeapi
 
+import "fmt"
+
+func (c *Client) Machines(limit int, offset int) (*NamedAPIResourceList, error) {
+	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("machine?limit=%d&offset=%d", limit, offset))
+}
+
+func (c *Client) Machine(id string) (*Machine, error) {
+	return do[Machine](c, fmt.Sprintf("machine/%s", id))
+}
+
 type Machine struct {
 	// The identifier for this resource.
 	ID int `json:"id"`

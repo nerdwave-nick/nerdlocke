@@ -1,5 +1,23 @@
 package pokeapi
 
+import "fmt"
+
+func (c *Client) EvolutionChains(limit int, offset int) (*APIResourceList, error) {
+	return doUncached[APIResourceList](c, fmt.Sprintf("evolution-chain?limit=%d&offset=%d", limit, offset))
+}
+
+func (c *Client) EvolutionChain(id string) (*EvolutionChain, error) {
+	return do[EvolutionChain](c, fmt.Sprintf("evolution-chain/%s", id))
+}
+
+func (c *Client) EvolutionTriggers(limit int, offset int) (*NamedAPIResourceList, error) {
+	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("evolution-trigger?limit=%d&offset=%d", limit, offset))
+}
+
+func (c *Client) EvolutionTrigger(nameOrId string) (*EvolutionTrigger, error) {
+	return do[EvolutionTrigger](c, fmt.Sprintf("evolution-trigger/%s", nameOrId))
+}
+
 type EvolutionChain struct {
 	// The identifier for this resource.
 	ID int `json:"id"`

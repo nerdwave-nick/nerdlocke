@@ -1,5 +1,15 @@
 package pokeapi
 
+import "fmt"
+
+func (c *Client) Languages(limit int, offset int) (*NamedAPIResourceList, error) {
+	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("language?limit=%d&offset=%d", limit, offset))
+}
+
+func (c *Client) Language(nameOrId string) (*Language, error) {
+	return do[Language](c, fmt.Sprintf("language/%s", nameOrId))
+}
+
 type NamedAPIResourceList struct {
 	// The total number of resources available from this API.
 	Count int `json:"count"`

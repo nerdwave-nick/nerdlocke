@@ -1,5 +1,47 @@
 package pokeapi
 
+import "fmt"
+
+func (c *Client) Items(limit int, offset int) (*NamedAPIResourceList, error) {
+	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("item?limit=%d&offset=%d", limit, offset))
+}
+
+func (c *Client) Item(idOrName string) (*Item, error) {
+	return do[Item](c, fmt.Sprintf("item/%s", idOrName))
+}
+
+func (c *Client) ItemAttributes(limit int, offset int) (*NamedAPIResourceList, error) {
+	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("item-attribute?limit=%d&offset=%d", limit, offset))
+}
+
+func (c *Client) ItemAttribute(idOrName string) (*ItemAttribute, error) {
+	return do[ItemAttribute](c, fmt.Sprintf("item-attribute/%s", idOrName))
+}
+
+func (c *Client) ItemCategories(limit int, offset int) (*NamedAPIResourceList, error) {
+	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("item-category?limit=%d&offset=%d", limit, offset))
+}
+
+func (c *Client) ItemCategory(idOrName string) (*ItemCategory, error) {
+	return do[ItemCategory](c, fmt.Sprintf("item-category/%s", idOrName))
+}
+
+func (c *Client) ItemFlingEffects(limit int, offset int) (*NamedAPIResourceList, error) {
+	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("item-fling-effect?limit=%d&offset=%d", limit, offset))
+}
+
+func (c *Client) ItemFlingEffect(idOrName string) (*ItemFlingEffect, error) {
+	return do[ItemFlingEffect](c, fmt.Sprintf("item-fling-effect/%s", idOrName))
+}
+
+func (c *Client) ItemPockets(limit int, offset int) (*NamedAPIResourceList, error) {
+	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("item-pocket?limit=%d&offset=%d", limit, offset))
+}
+
+func (c *Client) ItemPocket(idOrName string) (*ItemPocket, error) {
+	return do[ItemPocket](c, fmt.Sprintf("item-pocket/%s", idOrName))
+}
+
 type Item struct {
 	// The identifier for this resource.
 	ID int `json:"id"`

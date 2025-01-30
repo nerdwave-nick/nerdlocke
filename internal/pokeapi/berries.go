@@ -2,12 +2,24 @@ package pokeapi
 
 import "fmt"
 
+func (c *Client) Berries(limit int, offset int) (*NamedAPIResourceList, error) {
+	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("berry?limit=%d&offset=%d", limit, offset))
+}
+
 func (c *Client) Berry(nameOrId string) (*Berry, error) {
 	return do[Berry](c, fmt.Sprintf("berry/%s", nameOrId))
 }
 
+func (c *Client) BerryFirmnesses(limit int, offset int) (*NamedAPIResourceList, error) {
+	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("berry-firmness?limit=%d&offset=%d", limit, offset))
+}
+
 func (c *Client) BerryFirmness(nameOrId string) (*BerryFirmness, error) {
 	return do[BerryFirmness](c, fmt.Sprintf("berry-firmness/%s", nameOrId))
+}
+
+func (c *Client) BerryFlavors(limit int, offset int) (*NamedAPIResourceList, error) {
+	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("berry-flavor?limit=%d&offset=%d", limit, offset))
 }
 
 func (c *Client) BerryFlavor(nameOrId string) (*BerryFlavor, error) {

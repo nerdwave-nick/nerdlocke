@@ -31,16 +31,7 @@ func NewClient(cache Cache, client http.Client) *Client {
 	}
 }
 
-func do[T any](c *Client, endpoint string) (*T, error) {
-	value := new(T)
-	found, err := c.cache.Get(endpoint, value)
-	if err != nil {
-		return nil, err
-	}
-	if found {
-		return value, nil
-	}
-
+func doUncached[T any](c *Client, endpoint string) (*T, error) {
 	resp, err := c.client.Get(base_url + endpoint)
 	if err != nil {
 		return nil, err
@@ -63,4 +54,37 @@ func do[T any](c *Client, endpoint string) (*T, error) {
 		return nil, err
 	}
 	return v, nil
+}
+
+func do[T any](c *Client, endpoint string) (*T, error) {
+	value := new(T)
+	found, err := c.cache.Get(endpoint, value)
+	if err != nil {
+		return nil, err
+	}
+	if found {
+		return value, nil
+	}
+
+	resp, err := c.client.Get(base_url + endpoint)
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	err = json.Unmarshal(body, value)
+	if err != nil {
+		return nil, err
+	}
+
+	err = c.cache.Set(endpoint, value)
+	if err != nil {
+		return nil, err
+	}
+	return value, nil
 }

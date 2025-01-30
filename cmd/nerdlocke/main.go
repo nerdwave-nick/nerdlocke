@@ -64,6 +64,18 @@ func main() {
 			b, err = pokeapiClient.BerryFlavor(id)
 		case "berry-firmness":
 			b, err = pokeapiClient.BerryFirmness(id)
+		case "contest-type":
+			b, err = pokeapiClient.ContestType(id)
+		case "contest-effect":
+			b, err = pokeapiClient.ContestEffect(id)
+		case "super-contest-effect":
+			b, err = pokeapiClient.SuperContestEffect(id)
+		case "encounter-method":
+			b, err = pokeapiClient.EncounterMethod(id)
+		case "encounter-condition":
+			b, err = pokeapiClient.EncounterCondition(id)
+		case "encounter-condition-value":
+			b, err = pokeapiClient.EncounterConditionValue(id)
 		}
 		w.WriteHeader(http.StatusOK)
 		if err != nil {
