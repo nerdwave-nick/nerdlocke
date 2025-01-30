@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/maypok86/otter"
@@ -80,31 +81,38 @@ func (c *BoltCache) Set(endpoint string, value any) error {
 	return nil
 }
 
+var (
+	boltItemNotFoundError   = errors.New("item not found")
+	boltBucketNotFoundError = errors.New("bucket not found")
+)
+
 func (c *BoltCache) Get(endpoint string, value any) (bool, error) {
-	found := false
 	err := c.db.View(func(tx *bbolt.Tx) error {
 		b := tx.Bucket(bucket)
-		if b != nil {
-			return nil
+		if b == nil {
+			return boltBucketNotFoundError
 		}
 		bytes := b.Get([]byte(endpoint))
-		if bytes != nil {
-			found = false
-			return nil
+		fmt.Printf("bytes from bolt: %q\n", bytes)
+		if bytes == nil {
+			return boltItemNotFoundError
 		}
 		err := json.Unmarshal(bytes, value)
 		if err != nil {
 			return err
 		}
+		fmt.Printf("value from bolt: %v\n", value)
 		return nil
 	})
 	if err != nil {
-		fmt.Printf("error checking in bolt cache: %q\n", endpoint)
-		return found, err
-	}
-	if !found {
-		fmt.Printf("not found in bolt cache: %q\n", endpoint)
-		return false, nil
+		if errors.Is(err, boltBucketNotFoundError) {
+			return false, nil
+		}
+		if errors.Is(err, boltItemNotFoundError) {
+			return false, nil
+		}
+		fmt.Printf("error checking in bolt cache: %q, %v\n", endpoint, err)
+		return true, err
 	}
 	fmt.Printf("found in bolt cache: %q\n", endpoint)
 	return true, nil

@@ -37,14 +37,17 @@ func main() {
 	// builder.Cost(func(key string, value []byte) uint32 {
 	// 	return uint32(len(value))
 	// })
-	oc, err := builder.Build()
-	if err != nil {
-		panic(err)
-	}
-	otterCache := NewOtterCache(&oc)
+	// oc, err := builder.Build()
+	// if err != nil {
+	// panic(err)
+	// }
+	// otterCache := NewOtterCache(&oc)
 
 	// multi layer cache with preference for the in memory cache
-	multiCache := NewMultiLayerCache(otterCache, boltCache)
+	multiCache := NewMultiLayerCache(
+		// otterCache,
+		boltCache,
+	)
 
 	pokeapiClient := pokeapi.NewClient(multiCache, *http.DefaultClient)
 	frontend, err := frontend.GetAssetFS()
