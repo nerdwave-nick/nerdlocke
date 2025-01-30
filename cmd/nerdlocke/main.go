@@ -2,9 +2,12 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
+	"time"
 
+	"github.com/maypok86/otter"
 	"github.com/nerdwave-nick/nerdlocke/internal/frontend"
 	"github.com/nerdwave-nick/nerdlocke/internal/pokeapi"
 	"go.etcd.io/bbolt"
@@ -13,17 +16,37 @@ import (
 const boltdbPath = "./cache.bolt"
 
 func main() {
-	//...
-
+	// persistent bolt db and bolt cache
 	db, err := bbolt.Open(boltdbPath, 0600, nil)
 	if err != nil {
 		panic(err)
 	}
-	cache, err := NewBoltCache(db)
+	boltCache, err := NewBoltCache(db)
 	if err != nil {
 		panic(err)
 	}
-	pokeapiClient := pokeapi.NewClient(cache, *http.DefaultClient)
+
+	// in memory otter cache
+	builder, err := otter.NewBuilder[string, []byte](10000)
+	if err != nil {
+		panic(err)
+	}
+	builder.WithTTL(3 * time.Minute).DeletionListener(func(key string, _ []byte, cause otter.DeletionCause) {
+		fmt.Printf("deleting %q from otter cache due to %v\n", key, cause)
+	})
+	// builder.Cost(func(key string, value []byte) uint32 {
+	// 	return uint32(len(value))
+	// })
+	oc, err := builder.Build()
+	if err != nil {
+		panic(err)
+	}
+	otterCache := NewOtterCache(&oc)
+
+	// multi layer cache with preference for the in memory cache
+	multiCache := NewMultiLayerCache(otterCache, boltCache)
+
+	pokeapiClient := pokeapi.NewClient(multiCache, *http.DefaultClient)
 	frontend, err := frontend.GetAssetFS()
 	if err != nil {
 		panic(err)
@@ -55,6 +78,4 @@ func main() {
 		_, _ = w.Write(bytes)
 	})
 	log.Fatalln(http.ListenAndServe(":8080", nil))
-
-	//...
 }
