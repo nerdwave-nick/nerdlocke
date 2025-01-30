@@ -76,6 +76,12 @@ func main() {
 			b, err = pokeapiClient.EncounterCondition(id)
 		case "encounter-condition-value":
 			b, err = pokeapiClient.EncounterConditionValue(id)
+		case "pokemon":
+			if id != "" {
+				b, err = pokeapiClient.Pokemon(id)
+			} else {
+				b, err = pokeapiClient.Pokemons(10, 0)
+			}
 		}
 		w.WriteHeader(http.StatusOK)
 		if err != nil {

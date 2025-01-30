@@ -6,24 +6,24 @@ func (c *Client) Berries(limit int, offset int) (*NamedAPIResourceList, error) {
 	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("berry?limit=%d&offset=%d", limit, offset))
 }
 
-func (c *Client) Berry(nameOrId string) (*Berry, error) {
-	return do[Berry](c, fmt.Sprintf("berry/%s", nameOrId))
+func (c *Client) Berry(nameOrIdOrUrl string) (*Berry, error) {
+	return do[Berry](c, fmt.Sprintf("berry/%s", nameOrIdOrUrl))
 }
 
 func (c *Client) BerryFirmnesses(limit int, offset int) (*NamedAPIResourceList, error) {
 	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("berry-firmness?limit=%d&offset=%d", limit, offset))
 }
 
-func (c *Client) BerryFirmness(nameOrId string) (*BerryFirmness, error) {
-	return do[BerryFirmness](c, fmt.Sprintf("berry-firmness/%s", nameOrId))
+func (c *Client) BerryFirmness(nameOrIdOrUrl string) (*BerryFirmness, error) {
+	return do[BerryFirmness](c, fmt.Sprintf("berry-firmness/%s", nameOrIdOrUrl))
 }
 
 func (c *Client) BerryFlavors(limit int, offset int) (*NamedAPIResourceList, error) {
 	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("berry-flavor?limit=%d&offset=%d", limit, offset))
 }
 
-func (c *Client) BerryFlavor(nameOrId string) (*BerryFlavor, error) {
-	return do[BerryFlavor](c, fmt.Sprintf("berry-flavor/%s", nameOrId))
+func (c *Client) BerryFlavor(nameOrIdOrUrl string) (*BerryFlavor, error) {
+	return do[BerryFlavor](c, fmt.Sprintf("berry-flavor/%s", nameOrIdOrUrl))
 }
 
 type Berry struct {

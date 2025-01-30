@@ -6,32 +6,32 @@ func (c *Client) Generations(limit int, offset int) (*NamedAPIResourceList, erro
 	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("generation?limit=%d&offset=%d", limit, offset))
 }
 
-func (c *Client) Generation(idOrName string) (*Generation, error) {
-	return do[Generation](c, fmt.Sprintf("generation/%s", idOrName))
+func (c *Client) Generation(nameOrIdOrUrl string) (*Generation, error) {
+	return do[Generation](c, fmt.Sprintf("generation/%s", nameOrIdOrUrl))
 }
 
 func (c *Client) Pokedexes(limit int, offset int) (*NamedAPIResourceList, error) {
 	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("pokedex?limit=%d&offset=%d", limit, offset))
 }
 
-func (c *Client) Pokedex(idOrName string) (*Pokedex, error) {
-	return do[Pokedex](c, fmt.Sprintf("pokedex/%s", idOrName))
+func (c *Client) Pokedex(nameOrIdOrUrl string) (*Pokedex, error) {
+	return do[Pokedex](c, fmt.Sprintf("pokedex/%s", nameOrIdOrUrl))
 }
 
 func (c *Client) Versions(limit int, offset int) (*NamedAPIResourceList, error) {
 	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("version?limit=%d&offset=%d", limit, offset))
 }
 
-func (c *Client) Version(idOrName string) (*Version, error) {
-	return do[Version](c, fmt.Sprintf("version/%s", idOrName))
+func (c *Client) Version(nameOrIdOrUrl string) (*Version, error) {
+	return do[Version](c, fmt.Sprintf("version/%s", nameOrIdOrUrl))
 }
 
 func (c *Client) VersionGroups(limit int, offset int) (*NamedAPIResourceList, error) {
 	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("version-group?limit=%d&offset=%d", limit, offset))
 }
 
-func (c *Client) VersionGroup(idOrName string) (*VersionGroup, error) {
-	return do[VersionGroup](c, fmt.Sprintf("version-group/%s", idOrName))
+func (c *Client) VersionGroup(nameOrIdOrUrl string) (*VersionGroup, error) {
+	return do[VersionGroup](c, fmt.Sprintf("version-group/%s", nameOrIdOrUrl))
 }
 
 type Generation struct {

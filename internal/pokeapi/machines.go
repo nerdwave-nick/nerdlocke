@@ -6,8 +6,8 @@ func (c *Client) Machines(limit int, offset int) (*NamedAPIResourceList, error) 
 	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("machine?limit=%d&offset=%d", limit, offset))
 }
 
-func (c *Client) Machine(id string) (*Machine, error) {
-	return do[Machine](c, fmt.Sprintf("machine/%s", id))
+func (c *Client) Machine(idOrUrl string) (*Machine, error) {
+	return do[Machine](c, fmt.Sprintf("machine/%s", idOrUrl))
 }
 
 type Machine struct {

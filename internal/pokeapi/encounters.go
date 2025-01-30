@@ -6,24 +6,24 @@ func (c *Client) EncounterMethods(limit int, offset int) (*NamedAPIResourceList,
 	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("encounter-method?limit=%d&offset=%d", limit, offset))
 }
 
-func (c *Client) EncounterMethod(nameOrId string) (*EncounterMethod, error) {
-	return do[EncounterMethod](c, fmt.Sprintf("encounter-method/%s", nameOrId))
+func (c *Client) EncounterMethod(nameOrIdOrUrl string) (*EncounterMethod, error) {
+	return do[EncounterMethod](c, fmt.Sprintf("encounter-method/%s", nameOrIdOrUrl))
 }
 
 func (c *Client) EncounterConditions(limit int, offset int) (*NamedAPIResourceList, error) {
 	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("encounter-condition?limit=%d&offset=%d", limit, offset))
 }
 
-func (c *Client) EncounterCondition(nameOrId string) (*EncounterCondition, error) {
-	return do[EncounterCondition](c, fmt.Sprintf("encounter-condition/%s", nameOrId))
+func (c *Client) EncounterCondition(nameOrIdOrUrl string) (*EncounterCondition, error) {
+	return do[EncounterCondition](c, fmt.Sprintf("encounter-condition/%s", nameOrIdOrUrl))
 }
 
 func (c *Client) EncounterConditionValues(limit int, offset int) (*NamedAPIResourceList, error) {
 	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("encounter-condition-value?limit=%d&offset=%d", limit, offset))
 }
 
-func (c *Client) EncounterConditionValue(nameOrId string) (*EncounterConditionValue, error) {
-	return do[EncounterConditionValue](c, fmt.Sprintf("encounter-condition-value/%s", nameOrId))
+func (c *Client) EncounterConditionValue(nameOrIdOrUrl string) (*EncounterConditionValue, error) {
+	return do[EncounterConditionValue](c, fmt.Sprintf("encounter-condition-value/%s", nameOrIdOrUrl))
 }
 
 type EncounterMethod struct {

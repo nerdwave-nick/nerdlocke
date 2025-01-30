@@ -6,56 +6,56 @@ func (c *Client) Moves(limit int, offset int) (*NamedAPIResourceList, error) {
 	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("move?limit=%d&offset=%d", limit, offset))
 }
 
-func (c *Client) Move(idOrName string) (*Move, error) {
-	return do[Move](c, fmt.Sprintf("move/%s", idOrName))
+func (c *Client) Move(nameOrIdOrUrl string) (*Move, error) {
+	return do[Move](c, fmt.Sprintf("move/%s", nameOrIdOrUrl))
 }
 
 func (c *Client) MoveAilments(limit int, offset int) (*NamedAPIResourceList, error) {
 	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("move-ailment?limit=%d&offset=%d", limit, offset))
 }
 
-func (c *Client) MoveAilment(idOrName string) (*MoveAilment, error) {
-	return do[MoveAilment](c, fmt.Sprintf("move-ailment/%s", idOrName))
+func (c *Client) MoveAilment(nameOrIdOrUrl string) (*MoveAilment, error) {
+	return do[MoveAilment](c, fmt.Sprintf("move-ailment/%s", nameOrIdOrUrl))
 }
 
 func (c *Client) MoveBattleStyles(limit int, offset int) (*NamedAPIResourceList, error) {
 	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("move-battle-style?limit=%d&offset=%d", limit, offset))
 }
 
-func (c *Client) MoveBattleStyle(idOrName string) (*MoveBattleStyle, error) {
-	return do[MoveBattleStyle](c, fmt.Sprintf("move-battle-style/%s", idOrName))
+func (c *Client) MoveBattleStyle(nameOrIdOrUrl string) (*MoveBattleStyle, error) {
+	return do[MoveBattleStyle](c, fmt.Sprintf("move-battle-style/%s", nameOrIdOrUrl))
 }
 
 func (c *Client) MoveCategories(limit int, offset int) (*NamedAPIResourceList, error) {
 	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("move-category?limit=%d&offset=%d", limit, offset))
 }
 
-func (c *Client) MoveCategory(idOrName string) (*MoveCategory, error) {
-	return do[MoveCategory](c, fmt.Sprintf("move-category/%s", idOrName))
+func (c *Client) MoveCategory(nameOrIdOrUrl string) (*MoveCategory, error) {
+	return do[MoveCategory](c, fmt.Sprintf("move-category/%s", nameOrIdOrUrl))
 }
 
 func (c *Client) MoveDamageClasses(limit int, offset int) (*NamedAPIResourceList, error) {
 	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("move-damage-class?limit=%d&offset=%d", limit, offset))
 }
 
-func (c *Client) MoveDamageClass(idOrName string) (*MoveDamageClass, error) {
-	return do[MoveDamageClass](c, fmt.Sprintf("move-damage-class/%s", idOrName))
+func (c *Client) MoveDamageClass(nameOrIdOrUrl string) (*MoveDamageClass, error) {
+	return do[MoveDamageClass](c, fmt.Sprintf("move-damage-class/%s", nameOrIdOrUrl))
 }
 
 func (c *Client) MoveLearnMethods(limit int, offset int) (*NamedAPIResourceList, error) {
 	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("move-learn-method?limit=%d&offset=%d", limit, offset))
 }
 
-func (c *Client) MoveLearnMethod(idOrName string) (*MoveLearnMethod, error) {
-	return do[MoveLearnMethod](c, fmt.Sprintf("move-learn-method/%s", idOrName))
+func (c *Client) MoveLearnMethod(nameOrIdOrUrl string) (*MoveLearnMethod, error) {
+	return do[MoveLearnMethod](c, fmt.Sprintf("move-learn-method/%s", nameOrIdOrUrl))
 }
 
 func (c *Client) MoveTargets(limit int, offset int) (*NamedAPIResourceList, error) {
 	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("move-target?limit=%d&offset=%d", limit, offset))
 }
 
-func (c *Client) MoveTarget(idOrName string) (*MoveTarget, error) {
-	return do[MoveTarget](c, fmt.Sprintf("move-target/%s", idOrName))
+func (c *Client) MoveTarget(nameOrIdOrUrl string) (*MoveTarget, error) {
+	return do[MoveTarget](c, fmt.Sprintf("move-target/%s", nameOrIdOrUrl))
 }
 
 type Move struct {

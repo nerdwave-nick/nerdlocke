@@ -6,8 +6,8 @@ func (c *Client) Languages(limit int, offset int) (*NamedAPIResourceList, error)
 	return doUncached[NamedAPIResourceList](c, fmt.Sprintf("language?limit=%d&offset=%d", limit, offset))
 }
 
-func (c *Client) Language(nameOrId string) (*Language, error) {
-	return do[Language](c, fmt.Sprintf("language/%s", nameOrId))
+func (c *Client) Language(nameOrIdOrUrl string) (*Language, error) {
+	return do[Language](c, fmt.Sprintf("language/%s", nameOrIdOrUrl))
 }
 
 type NamedAPIResourceList struct {
@@ -18,7 +18,7 @@ type NamedAPIResourceList struct {
 	// The URL for the previous page in the list.
 	Previous string `json:"previous"`
 	// A list of named API resources.
-	Results NamedAPIResource `json:"results"`
+	Results []NamedAPIResource `json:"results"`
 }
 
 type APIResourceList struct {
@@ -29,7 +29,7 @@ type APIResourceList struct {
 	// The URL for the previous page in the list.
 	Previous string `json:"previous"`
 	// A list of named API resources.
-	Results APIResource `json:"results"`
+	Results []APIResource `json:"results"`
 }
 
 // Languages for translations of API resource information.
