@@ -191,7 +191,7 @@ func rootMain(parentCtx context.Context) error {
 	)
 
 	papiClient := pokeapi.NewClient(multiCache, *http.DefaultClient)
-	b, err := papiClient.Berry("0")
+	b, err := papiClient.Berry("1")
 	slog.Info("berry", slog.Any("berry", b), slog.Any("err", err))
 
 	frontend, err := frontend.GetAssetFS()
