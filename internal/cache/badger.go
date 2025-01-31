@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/dgraph-io/badger"
@@ -27,15 +28,13 @@ func (c *BadgerCache) putItem(key string, value []byte) error {
 }
 
 func (c *BadgerCache) Set(endpoint string, value any) error {
-	fmt.Printf("writing to badger cache: %q\n", endpoint)
+	slog.Debug(fmt.Sprintf("writing to badger cache: %q\n", endpoint))
 	bytes, err := json.Marshal(value)
 	if err != nil {
 		return err
 	}
 	return c.putItem(endpoint, bytes)
 }
-
-var boltBucketNotFoundError = errors.New("bucket not found")
 
 func (c *BadgerCache) getItem(key string, value any) (bool, error) {
 	var bytes []byte = nil
@@ -65,13 +64,13 @@ func (c *BadgerCache) getItem(key string, value any) (bool, error) {
 func (c *BadgerCache) Get(endpoint string, value any) (bool, error) {
 	found, err := c.getItem(endpoint, value)
 	if err != nil {
-		fmt.Printf("error checking in bolt cache: %q, %v\n", endpoint, err)
+		slog.Debug(fmt.Sprintf("error checking in bolt cache: %q, %v\n", endpoint, err))
 		return false, err
 	}
 	if !found {
-		fmt.Printf("not found in bolt cache: %q\n", endpoint)
+		slog.Debug(fmt.Sprintf("not found in bolt cache: %q\n", endpoint))
 		return false, nil
 	}
-	fmt.Printf("found in bolt cache: %q\n", endpoint)
+	slog.Debug(fmt.Sprintf("found in bolt cache: %q\n", endpoint))
 	return true, nil
 }

@@ -2,6 +2,7 @@ package cache
 
 import (
 	"fmt"
+	"log/slog"
 
 	"github.com/nerdwave-nick/pokeapi-go"
 )
@@ -15,7 +16,7 @@ func NewMultiLayerCache(caches ...pokeapi.Cache) *MultiLayerCache {
 }
 
 func (c *MultiLayerCache) Set(endpoint string, value any) error {
-	fmt.Printf("writing to multi layer cache: %q\n", endpoint)
+	slog.Debug(fmt.Sprintf("writing to multi layer cache: %q\n", endpoint))
 	for _, cache := range c.caches {
 		err := cache.Set(endpoint, value)
 		if err != nil {
@@ -26,7 +27,7 @@ func (c *MultiLayerCache) Set(endpoint string, value any) error {
 }
 
 func (c *MultiLayerCache) Get(endpoint string, value any) (bool, error) {
-	fmt.Printf("getting from multi layer cache: %q\n", endpoint)
+	slog.Debug(fmt.Sprintf("getting from multi layer cache: %q\n", endpoint))
 	indexFound := -1
 	for i, cache := range c.caches {
 		found, err := cache.Get(endpoint, value)
