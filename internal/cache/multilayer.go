@@ -3,7 +3,7 @@ package cache
 import (
 	"fmt"
 
-	"github.com/nerdwave-nick/nerdlocke/internal/pokeapi"
+	"github.com/nerdwave-nick/pokeapi-go"
 )
 
 type MultiLayerCache struct {

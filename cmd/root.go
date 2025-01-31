@@ -17,7 +17,7 @@ import (
 	intapi "github.com/nerdwave-nick/nerdlocke/internal/api/pokeapi"
 	"github.com/nerdwave-nick/nerdlocke/internal/cache"
 	"github.com/nerdwave-nick/nerdlocke/internal/frontend"
-	"github.com/nerdwave-nick/nerdlocke/internal/pokeapi"
+	"github.com/nerdwave-nick/pokeapi-go"
 	"github.com/spf13/cobra"
 )
 
@@ -86,7 +86,6 @@ var rootCmd = &cobra.Command{
 		if err := rootOpts.Validate(); err != nil {
 			return fmt.Errorf("incorrect command usage:\n%w\n", err)
 		}
-		slog.Warn("setting log level to", slog.String("level", rootOpts.LogLevel))
 		switch strings.ToLower(rootOpts.LogLevel) {
 		case "debug":
 			slog.SetLogLoggerLevel(slog.LevelDebug)
@@ -97,7 +96,7 @@ var rootCmd = &cobra.Command{
 		case "error":
 			slog.SetLogLoggerLevel(slog.LevelError)
 		default:
-			slog.Error("no/invalid log level provided, setting to info")
+			slog.Warn("no/invalid log level provided, setting to info")
 			slog.SetLogLoggerLevel(slog.LevelInfo)
 		}
 		return nil
@@ -191,7 +190,9 @@ func rootMain(parentCtx context.Context) error {
 		&boltCache,
 	)
 
-	_ = pokeapi.NewClient(multiCache, *http.DefaultClient)
+	papiClient := pokeapi.NewClient(multiCache, *http.DefaultClient)
+	b, _ := papiClient.Berry("0")
+	slog.Info("berry", slog.Any("berry", b))
 
 	frontend, err := frontend.GetAssetFS()
 	if err != nil {
